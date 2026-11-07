@@ -13,7 +13,8 @@
 (function(){
   var c=window.SITE_CONFIG||{};
   var id=c.pixelId||'';
-  if(!id||/PENDENTE/i.test(id))return;
+  if(!id||/PENDENTE/i.test(id)||window.__lpMetaPageView===id)return;
+  window.__lpMetaPageView=id;
   !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
   fbq('init',id);fbq('track','PageView');
 })();
@@ -270,7 +271,9 @@
   var url=(c.checkoutUrl||'').trim();
   var hasCheckout=!!url && !/PENDENTE/i.test(url) && /^https?:\/\//i.test(url);
   function pickTrackingParams(){
-    /* Whitelist only: utm_* and fbclid. Never forward off/checkoutMode/junk. */
+    /* Whitelist only: utm_* and fbclid. Never forward off, checkoutMode, email or any other query key.
+       Hotmart xcod is whatever the LabOfertas script writes on the link (lv_ + its own session).
+       Do not invent a session and do not copy xcod from the landing query: a non-lv value makes that script leave the link untouched. */
     var out=[];
     try{
       var sp=new URLSearchParams(location.search);
@@ -365,8 +368,12 @@
       window.addEventListener('orientationchange',syncBar);
     }
   }
-  if(c.labofertasScript && !/PENDENTE/i.test(c.labofertasScript)){
-    var s=document.createElement('script'); s.async=true; s.src=c.labofertasScript; document.head.appendChild(s);
+  if(c.labofertasScript && !/PENDENTE/i.test(c.labofertasScript) && !document.querySelector('script[data-lp-labofertas]')){
+    var s=document.createElement('script');
+    s.async=true;
+    s.src=c.labofertasScript;
+    s.setAttribute('data-lp-labofertas','1');
+    document.head.appendChild(s);
   }
   if(c.pixelId && !/PENDENTE/i.test(c.pixelId)){
     var note=document.querySelector('[data-pixel-note]'); if(note) note.hidden=false;
