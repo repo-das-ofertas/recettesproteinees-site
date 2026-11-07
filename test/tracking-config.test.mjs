@@ -256,3 +256,24 @@ test('landing copy, price and guarantee anchors are unchanged', () => {
   assert.equal(indexHtml.includes('Cette page utilise le Pixel Meta (événement PageView uniquement).'), true);
   assert.equal(fs.readFileSync(path.join(root, 'CNAME'), 'utf8').trim(), 'recettesproteinees.com');
 });
+
+test('privacy page states configured PageView and LabOfertas script', () => {
+  const text = fs.readFileSync(path.join(root, 'confidentialite/index.html'), 'utf8');
+  const sales = text.slice(text.indexOf('<h2>Pages de vente</h2>'), text.indexOf('<h2>Droits relatifs'));
+  assert.equal(sales.includes('est vide'), false);
+  assert.equal(sales.includes('aucun pixel'), false);
+  assert.equal(sales.includes('activée plus tard'), false);
+  assert.equal(sales.includes('pixel Meta'), true);
+  assert.equal(sales.includes('événement PageView uniquement'), true);
+  assert.equal(sales.includes('script LabOfertas'), true);
+  assert.equal(sales.includes(PIXEL), false);
+  assert.equal(sales.includes('painel.labofertas.com'), false);
+  for (const absent of ['Purchase', 'InitiateCheckout', 'CAPI', 'Conversions', 'consentement']) {
+    assert.equal(sales.includes(absent), false, absent);
+  }
+  assert.equal(text.includes('Dernière mise à jour : 7 novembre 2026'), true);
+  assert.equal(text.includes('<h2>Achat et paiement (Hotmart)</h2>'), true);
+  assert.equal(text.includes('<h2>Mini-application</h2>'), true);
+  assert.equal(text.includes('<h2>Droits relatifs à vos données</h2>'), true);
+  assert.equal(text.includes('https://www.cnil.fr/'), true);
+});
