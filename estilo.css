@@ -30,7 +30,7 @@ a{color:var(--brand)}a:focus-visible,button:focus-visible{outline:3px solid #c4a
 @media(min-width:720px){.benefits ul{grid-template-columns:repeat(3,1fr)}}
 .benefits li{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1rem 1.05rem;font-weight:600}
 .gallery{padding:1rem 0 1.75rem}
-.gallery h2,.catalog h2,.offer h2,.garantie h2,.faq h2,.scene h2,.demo h2,.exemple h2{font-size:clamp(1.25rem,3vw,1.6rem);margin:0 0 .9rem}
+.gallery h2,.catalog h2,.offer h2,.garantie h2,.faq h2,.scene h2,.demo h2,.exemple h2,.commentaires h2{font-size:clamp(1.25rem,3vw,1.6rem);margin:0 0 .9rem}
 .cards{display:grid;gap:.85rem;grid-template-columns:repeat(2,minmax(0,1fr))}
 @media(min-width:720px){.cards{gap:1rem;grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(min-width:980px){.cards{grid-template-columns:repeat(4,minmax(0,1fr))}}
@@ -65,7 +65,7 @@ a{color:var(--brand)}a:focus-visible,button:focus-visible{outline:3px solid #c4a
 .faq summary{cursor:pointer;font-weight:700}
 .faq .resp{margin-top:.55rem;color:var(--muted)}
 footer{padding:1.5rem 0 2rem;color:var(--muted);font-size:.9rem}
-/* Keep sticky always visible; leave clearance so content is never trapped under it. */
+/* Keep clearance constant so the bar can show and hide without shifting the page. */
 html.has-sticky{
   scroll-padding-bottom:calc(var(--sticky-h) + 1.25rem + env(safe-area-inset-bottom,0px));
 }
@@ -79,7 +79,8 @@ html.has-sticky .garantie,
 html.has-sticky .faq,
 html.has-sticky .demo,
 html.has-sticky .scene,
-html.has-sticky .exemple{
+html.has-sticky .exemple,
+html.has-sticky .commentaires{
   padding-bottom:calc(var(--sticky-h) + 1.25rem + env(safe-area-inset-bottom,0px));
 }
 
@@ -91,7 +92,8 @@ html.has-sticky .faq details,
 html.has-sticky .demo figure,
 html.has-sticky .scene,
 html.has-sticky .exemple,
-html.has-sticky .exemple-notes{
+html.has-sticky .exemple-notes,
+html.has-sticky .commentaire{
   scroll-margin-bottom:calc(var(--sticky-h) + 1rem + env(safe-area-inset-bottom,0px));
 }
 html.has-sticky footer{
@@ -132,3 +134,13 @@ footer .links{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin:.5rem 0}
 .exemple-notes{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:1rem 1.1rem;max-width:42rem}
 .exemple-notes summary{cursor:pointer;font-weight:700}
 .exemple-notes .resp{margin-top:.55rem;color:var(--muted);font-size:.92rem}
+.commentaires{padding:1.25rem 0 1.5rem}
+.commentaires-source{margin:-.35rem 0 .95rem}
+.commentaires-list{list-style:none;margin:0;padding:0;display:grid;gap:1rem;max-width:40rem}
+.commentaire{min-width:0}
+.commentaire-tete{display:flex;gap:.6rem;align-items:center;min-width:0}
+.commentaire-avatar{flex:0 0 2rem;width:2rem;height:2rem;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:.68rem;font-weight:750;line-height:1}
+.commentaire-nom{margin:0;font-weight:750;font-size:.95rem;line-height:1.2}
+.etoiles{margin:.12rem 0 0;color:#9a7430;letter-spacing:.14em;font-size:.82rem;line-height:1}
+.commentaire-bulle{margin:.4rem 0 0 2.6rem;background:#eceff1;border-radius:18px;padding:.7rem .9rem;min-width:0}
+.commentaire-bulle p{margin:0;overflow-wrap:anywhere}

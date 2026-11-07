@@ -9,7 +9,7 @@
  }
  const walk=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let node;
  while((node=walk.nextNode())){
-  if(!node.parentElement||node.parentElement.closest('script,style,noscript,code,pre'))continue;
+  if(!node.parentElement||node.parentElement.closest('script,style,noscript,code,pre,.commentaire'))continue;
   node.textContent=format(node.textContent);
  }
  for(const el of document.querySelectorAll('[alt],[aria-label],[title]')){
