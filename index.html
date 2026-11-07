@@ -129,6 +129,85 @@
   </div>
 </section>
 
+<section class="commentaires" id="commentaires" aria-labelledby="commentaires-title">
+  <div class="wrap">
+    <h2 id="commentaires-title">Commentaires</h2>
+    <p class="micro commentaires-source">Partagés via Facebook.</p>
+    <ul class="commentaires-list">
+      <li>
+        <article class="commentaire">
+          <div class="commentaire-tete">
+            <span class="commentaire-avatar" aria-hidden="true">CR</span>
+            <div>
+              <p class="commentaire-nom">Camille R.</p>
+              <p class="etoiles" role="img" aria-label="5 sur 5"><span aria-hidden="true">★★★★★</span></p>
+            </div>
+          </div>
+          <blockquote class="commentaire-bulle">
+            <p>Enfin des recettes avec des ingrédients qu'on trouve dans n'importe quel supermarché. Pas besoin d'acheter plein de trucs spéciaux, ça change !</p>
+          </blockquote>
+        </article>
+      </li>
+      <li>
+        <article class="commentaire">
+          <div class="commentaire-tete">
+            <span class="commentaire-avatar" aria-hidden="true">TL</span>
+            <div>
+              <p class="commentaire-nom">Thomas L.</p>
+              <p class="etoiles" role="img" aria-label="5 sur 5"><span aria-hidden="true">★★★★★</span></p>
+            </div>
+          </div>
+          <blockquote class="commentaire-bulle">
+            <p>J'en avais marre de tomber sur des recettes avec de la whey partout. Là au moins, c'est de la vraie cuisine.</p>
+          </blockquote>
+        </article>
+      </li>
+      <li>
+        <article class="commentaire">
+          <div class="commentaire-tete">
+            <span class="commentaire-avatar" aria-hidden="true">JM</span>
+            <div>
+              <p class="commentaire-nom">Julie M.</p>
+              <p class="etoiles" role="img" aria-label="5 sur 5"><span aria-hidden="true">★★★★★</span></p>
+            </div>
+          </div>
+          <blockquote class="commentaire-bulle">
+            <p>Le prix par portion, c'est vraiment une bonne idée. Avec le budget courses qui grimpe, ça aide à s'organiser.</p>
+          </blockquote>
+        </article>
+      </li>
+      <li>
+        <article class="commentaire">
+          <div class="commentaire-tete">
+            <span class="commentaire-avatar" aria-hidden="true">NB</span>
+            <div>
+              <p class="commentaire-nom">Nicolas B.</p>
+              <p class="etoiles" role="img" aria-label="5 sur 5"><span aria-hidden="true">★★★★★</span></p>
+            </div>
+          </div>
+          <blockquote class="commentaire-bulle">
+            <p>150 recettes pour 14,90 €, franchement c'est plutôt intéressant. Surtout si ça m'évite de manger toujours la même chose 😅</p>
+          </blockquote>
+        </article>
+      </li>
+      <li>
+        <article class="commentaire">
+          <div class="commentaire-tete">
+            <span class="commentaire-avatar" aria-hidden="true">ÉP</span>
+            <div>
+              <p class="commentaire-nom">Élodie P.</p>
+              <p class="etoiles" role="img" aria-label="5 sur 5"><span aria-hidden="true">★★★★★</span></p>
+            </div>
+          </div>
+          <blockquote class="commentaire-bulle">
+            <p>Ce qui me plaît, c'est le côté simple. Pas besoin de passer deux heures en cuisine ou de chercher des ingrédients introuvables.</p>
+          </blockquote>
+        </article>
+      </li>
+    </ul>
+  </div>
+</section>
+
 <section class="offer" id="offre">
   <div class="wrap">
     <div class="offer-box">
@@ -237,13 +316,53 @@
       bar.setAttribute('inert','');
       document.documentElement.classList.remove('has-sticky');
     } else {
-      /* Sticky always on (mobile + desktop) when checkout URL is valid. */
-      bar.hidden=false;
-      bar.classList.add('on');
-      bar.setAttribute('aria-hidden','false');
-      bar.removeAttribute('inert');
+      /* Clearance stays on so the bar can show and hide without shifting layout.
+         The bar itself is on only while no inline purchase CTA is in the viewport. */
       document.documentElement.classList.add('has-sticky');
-      var link=bar.querySelector('a'); if(link) link.tabIndex=0;
+      var inline=[];
+      document.querySelectorAll('[data-checkout="front"]').forEach(function(el){
+        if(el.getAttribute('data-cta')!=='sticky') inline.push(el);
+      });
+      var link=bar.querySelector('a');
+      function inlineOnScreen(){
+        var h=window.innerHeight||document.documentElement.clientHeight;
+        var w=window.innerWidth||document.documentElement.clientWidth;
+        for(var i=0;i<inline.length;i++){
+          var el=inline[i];
+          if(el.hidden) continue;
+          var r=el.getBoundingClientRect();
+          if(r.width<1||r.height<1) continue;
+          if(r.bottom>0&&r.right>0&&r.top<h&&r.left<w) return true;
+        }
+        return false;
+      }
+      function syncBar(){
+        var show=!inlineOnScreen();
+        var shown=bar.classList.contains('on')&&!bar.hidden;
+        if(show===shown) return;
+        if(show){
+          bar.hidden=false;
+          bar.classList.add('on');
+          bar.setAttribute('aria-hidden','false');
+          bar.removeAttribute('inert');
+          if(link) link.tabIndex=0;
+        }else{
+          if(bar.contains(document.activeElement)) document.activeElement.blur();
+          if(link) link.tabIndex=-1;
+          bar.classList.remove('on');
+          bar.setAttribute('aria-hidden','true');
+          bar.setAttribute('inert','');
+          bar.hidden=true;
+        }
+      }
+      syncBar();
+      if(window.IntersectionObserver&&inline.length){
+        var io=new IntersectionObserver(function(){ syncBar(); },{threshold:[0]});
+        inline.forEach(function(el){ io.observe(el); });
+      }
+      window.addEventListener('scroll',syncBar,{passive:true});
+      window.addEventListener('resize',syncBar);
+      window.addEventListener('orientationchange',syncBar);
     }
   }
   if(c.labofertasScript && !/PENDENTE/i.test(c.labofertasScript)){
